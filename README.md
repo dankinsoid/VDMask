@@ -11,7 +11,7 @@
  let package = Package(
  name: "SomeProject",
  dependencies: [
- .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "0.2.0")
+ .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "0.3.0")
  ],
  targets: [
  .target(name: "SomeProject", dependencies: ["VDRegex"])

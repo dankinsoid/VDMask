@@ -40,6 +40,10 @@ public struct Regex: ExpressibleByStringLiteral, ExpressibleByArrayLiteral, Expr
 		value = "[\(elements.map({ $0.value }).joined())]"
 	}
 	
+	public init(@RegexBuilder _ builder: () -> Regex) {
+		self = builder()
+	}
+	
 	public var any: Regex { self + .any }
 	public var digit: Regex { self + .digit }
 	public var notDigit: Regex { self + .notDigit }
@@ -89,14 +93,6 @@ public struct Regex: ExpressibleByStringLiteral, ExpressibleByArrayLiteral, Expr
 	
 	public func string(_ string: String) -> Regex {
 		self + .string(string)
-	}
-	
-	public static func +(_ lhs: Regex, _ rhs: Regex) -> Regex {
-		Regex(lhs.value + rhs.value)
-	}
-	
-	public static func |(_ lhs: Regex, _ rhs: Regex) -> Regex {
-		Regex("\(lhs.value)|\(rhs.value)")
 	}
 	
 	public subscript(_ regex: SymbolsSet...) -> Regex {
@@ -234,189 +230,8 @@ extension Regex {
 	}
 }
 
-prefix operator ^
-postfix operator +
-postfix operator *
-postfix operator *?
-postfix operator +?
-postfix operator *+
-postfix operator ++
-
-prefix operator ?=
-prefix operator ?!
-prefix operator ?<=
-prefix operator ?<!
-
-public postfix func +(_ lhs: Regex) -> Regex {
-	lhs.repeats
-}
-
-public postfix func *(_ lhs: Regex) -> Regex {
-	lhs.anyCount
-}
-
-public postfix func *?(_ lhs: Regex) -> Regex {
-	Regex(lhs.value + "*?")
-}
-
-public postfix func +?(_ lhs: Regex) -> Regex {
-	Regex(lhs.value + "+?")
-}
-
-public postfix func *+(_ lhs: Regex) -> Regex {
-	Regex(lhs.value + "*+")
-}
-
-public postfix func ++(_ lhs: Regex) -> Regex {
-	Regex(lhs.value + "++")
-}
-
-public prefix func ^(_ rhs: Regex) -> Regex {
-	Regex("^" + rhs.value)
-}
-
-public prefix func ^(_ rhs: Regex.SymbolsSet) -> Regex.SymbolsSet {
-	"^" + rhs
-}
-
-public prefix func !(_ rhs: Regex.SymbolsSet) -> Regex.SymbolsSet {
-	^rhs
-}
-
-public prefix func ?=(_ rhs: Regex) -> Regex {
-	Regex("(?=\(rhs.value))")
-}
-
-public prefix func ?!(_ rhs: Regex) -> Regex {
-	Regex("(?!\(rhs.value))")
-}
-
-public prefix func ?<=(_ rhs: Regex) -> Regex {
-	Regex("(?<=\(rhs.value))")
-}
-
-public prefix func ?<!(_ rhs: Regex) -> Regex {
-	Regex("(?<!\(rhs.value))")
-}
-
 extension Regex {
 	public var ns: NSRegularExpression? {
 		try? NSRegularExpression(pattern: value)
-	}
-}
-
-extension CharacterSet {
-	
-	public static var regexSpecial: CharacterSet {
-		CharacterSet(charactersIn: "[]\\/^$.|?*+(){}")
-	}
-}
-
-extension StringProtocol {
-	
-	public func match(_ regex: Regex) -> Bool {
-		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.value)
-		return emailPredicate.evaluate(with: String(self))
-	}
-	
-	public func replacing(_ regex: Regex, with template: String) -> String {
-		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: NSRange(location: 0, length: count), withTemplate: template) ?? String(self)
-	}
-}
-
-public func ~=<T: StringProtocol>(lhs: Regex, rhs: T) -> Bool {
-	rhs.match(lhs)
-}
-
-private extension String {
-	var regexShielding: String {
-		map { CharacterSet.regexSpecial.contains($0) ? "\\\($0)" : String($0) }.joined()
-			.replacingOccurrences(of: "\n", with: "\\n")
-	}
-}
-
-extension Regex {
-	public init(@RegexBuilder _ builder: () -> Regex) {
-		self = builder()
-	}
-}
-
-@resultBuilder
-public enum RegexBuilder {
-	
-	@inlinable
-	public static func buildBlock(_ components: Regex...) -> Regex {
-		create(from: components)
-	}
-	
-	@inlinable
-	public static func buildArray(_ components: [Regex]) -> Regex {
-		create(from: components)
-	}
-	
-	@inlinable
-	public static func buildEither(first component: Regex) -> Regex {
-		component
-	}
-	
-	@inlinable
-	public static func buildEither(second component: Regex) -> Regex {
-		component
-	}
-	
-	@inlinable
-	public static func buildOptional(_ component: Regex?) -> Regex {
-		component ?? create(from: [])
-	}
-	
-	@inlinable
-	public static func buildLimitedAvailability(_ component: Regex) -> Regex {
-		component
-	}
-	
-	@inlinable
-	public static func buildExpression(_ expression: Regex) -> Regex {
-		expression
-	}
-	
-	@inlinable
-	public static func buildExpression(_ expression: [Regex.SymbolsSet]) -> Regex {
-		Regex(expression)
-	}
-	
-	@inlinable
-	public static func buildExpression(_ string: String) -> Regex {
-		.string(string)
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> Int) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> ClosedRange<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> PartialRangeFrom<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> PartialRangeThrough<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func create(from regexes: [Regex]) -> Regex {
-		Regex(regexes.map { $0.value }.joined())
-	}
-}
-
-extension CharacterSet {
-	func contains(_ character: Character) -> Bool {
-		character.unicodeScalars.allSatisfy(contains)
 	}
 }
