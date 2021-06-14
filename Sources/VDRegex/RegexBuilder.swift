@@ -80,3 +80,42 @@ public enum RegexBuilder {
 		Regex(regexes.map { $0.value }.joined())
 	}
 }
+
+@resultBuilder
+public struct RegexSymbolsBuilder {
+	
+	@inlinable
+	public static func buildBlock(_ components: [Regex.SymbolsSet]...) -> [Regex.SymbolsSet] {
+		Array(components.joined())
+	}
+	
+	@inlinable
+	public static func buildArray(_ components: [[Regex.SymbolsSet]]) -> [Regex.SymbolsSet] {
+		Array(components.joined())
+	}
+	
+	@inlinable
+	public static func buildEither(first component: [Regex.SymbolsSet]) -> [Regex.SymbolsSet] {
+		component
+	}
+	
+	@inlinable
+	public static func buildEither(second component: [Regex.SymbolsSet]) -> [Regex.SymbolsSet] {
+		component
+	}
+	
+	@inlinable
+	public static func buildOptional(_ component: [Regex.SymbolsSet]?) -> [Regex.SymbolsSet] {
+		component ?? []
+	}
+	
+	@inlinable
+	public static func buildLimitedAvailability(_ component: [Regex.SymbolsSet]) -> [Regex.SymbolsSet] {
+		component
+	}
+	
+	@inlinable
+	public static func buildExpression(_ expression: Regex.SymbolsSet) -> [Regex.SymbolsSet] {
+		[expression]
+	}
+}
