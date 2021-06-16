@@ -20,7 +20,7 @@ let phoneRegexShort = Regex("+")[0-9]("-(")[0-9]({3})(")-")[0-9]({3})(Regex("-")
  
 let phoneRegexReadable = Regex {
   "+"
-  Regex[0-9]
+  [0-9]
   "-("
   Regex[0-9].count(3)
   ")-"
@@ -40,15 +40,15 @@ let phoneRegexReadable = Regex {
  import PackageDescription
  
  let package = Package(
- name: "SomeProject",
- dependencies: [
- .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.2.0")
- ],
- targets: [
- .target(name: "SomeProject", dependencies: ["VDRegex"])
- ]
- )
- ```
- ```ruby
- $ swift build
- ```
+   name: "SomeProject",
+   dependencies: [
+     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.3.0")
+   ],
+   targets: [
+    .target(name: "SomeProject", dependencies: ["VDRegex"])
+   ]
+  )
+```
+```ruby
+$ swift build
+```

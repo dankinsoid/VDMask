@@ -31,7 +31,7 @@ final class VDRegexTests: XCTestCase {
 		
 		Regex {
 			"+"
-			Regex[0-9]
+			[0-9]
 			"-("
 			Regex[0-9].count(3)
 			")-"
