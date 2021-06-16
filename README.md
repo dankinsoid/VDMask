@@ -20,7 +20,7 @@ let phoneRegexShort = Regex("+")[0-9]("-(")[0-9]({3})(")-")[0-9]({3})(Regex("-")
  
 let phoneRegexReadable = Regex {
   "+"
-  [0-9]
+  [0-9] //or Regex.digit
   "-("
   Regex[0-9].count(3)
   ")-"
@@ -42,7 +42,7 @@ let phoneRegexReadable = Regex {
  let package = Package(
    name: "SomeProject",
    dependencies: [
-     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.3.0")
+     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.4.0")
    ],
    targets: [
     .target(name: "SomeProject", dependencies: ["VDRegex"])
