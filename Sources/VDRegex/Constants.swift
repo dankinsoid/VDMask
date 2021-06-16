@@ -53,7 +53,7 @@ extension Regex {
 	///$
 	public static var textEnd: Regex { Regex("$") }
 	///`+`
-	public static var repeats: Regex { .repeats(.default) }
+	public static var repeats: Regex { .count(.default) }
 	///`*`
 	public static var anyCount: Regex { .anyCount(.default) }
 	///`?`
@@ -61,27 +61,27 @@ extension Regex {
 	///`?`
 	public static func oneOrNone(_ quantification: Quantification) -> Regex { Regex("?" + quantification.rawValue) }
 	///`+`
-	public static func repeats(_ quantification: Quantification) -> Regex { Regex("+" + quantification.rawValue) }
+	public static func count(_ quantification: Quantification) -> Regex { Regex("+" + quantification.rawValue) }
 	///`*`
 	public static func anyCount(_ quantification: Quantification) -> Regex { Regex("*" + quantification.rawValue) }
 	
 	///{count}
-	public static func repeats(_ count: Int, _ quantification: Quantification = .default) -> Regex {
+	public static func count(_ count: Int, _ quantification: Quantification = .default) -> Regex {
 		Regex("{\(count)}" + quantification.rawValue)
 	}
 	
 	///{min,max}
-	public static func repeats(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
+	public static func count(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
 		Regex("{\(range.lowerBound),\(range.upperBound)}" + quantification.rawValue)
 	}
 	
 	///{min,}
-	public static func repeats(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
+	public static func count(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
 		Regex("{\(range.lowerBound),}" + quantification.rawValue)
 	}
 	
 	///{,max}
-	public static func repeats(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
+	public static func count(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
 		Regex("{,\(range.upperBound)}" + quantification.rawValue)
 	}
 	
@@ -102,7 +102,7 @@ extension Regex {
 	
 	///string shielding
 	public static func string(_ string: String) -> Regex {
-		Regex((string.count > 1 ? "\\Q\(string)\\E" : string.regexShielding))
+		Regex((string.count > 3 ? "\\Q\(string)\\E" : string.regexShielding))
 	}
 	
 	///[symbols]
@@ -137,6 +137,21 @@ extension Regex {
 	///(?(group)then|else)
 	public static func `if`(group: Int, @RegexBuilder then: () -> Regex, @RegexBuilder  else: () -> Regex) -> Regex {
 		.if(group: group, then: then(), else: `else`())
+	}
+	
+	///regex0|regex1
+	public static func or(_ regexes: [Regex]) -> Regex {
+		Regex(regexes.map { $0.value }.joined(separator: "|"))
+	}
+	
+	///regex0|regex1
+	public static func or(_ regexes: Regex...) -> Regex {
+		.or(regexes)
+	}
+	
+	///regex0|regex1
+	public static func or(@RegexesBuilder _ regexes: () -> [Regex]) -> Regex {
+		.or(regexes())
 	}
 }
 
@@ -185,28 +200,28 @@ extension Regex {
 	public var anyCount: Regex { self + .anyCount }
 	
 	///`+`
-	public func repeats(_ quantification: Quantification) -> Regex { self + .repeats(quantification) }
+	public func count(_ quantification: Quantification) -> Regex { self + .count(quantification) }
 	///`*`
 	public func anyCount(_ quantification: Quantification) -> Regex { self + .anyCount(quantification) }
 	
 	///{count}
-	public func repeats(_ count: Int, _ quantification: Quantification = .default) -> Regex {
-		self + .repeats(count, quantification)
+	public func count(_ count: Int, _ quantification: Quantification = .default) -> Regex {
+		self + .count(count, quantification)
 	}
 	
 	///{min,max}
-	public func repeats(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
-		self + .repeats(range, quantification)
+	public func count(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
+		self + .count(range, quantification)
 	}
 	
 	///{min,}
-	public func repeats(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
-		self + .repeats(range, quantification)
+	public func count(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
+		self + .count(range, quantification)
 	}
 	
 	///{,max}
-	public func repeats(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
-		self + .repeats(range, quantification)
+	public func count(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
+		self + .count(range, quantification)
 	}
 	
 	///\number
@@ -265,6 +280,15 @@ extension Regex {
 		self + .if(group: group, then: then(), else: `else`())
 	}
 	
+	///regex0|regex1
+	public func or(_ regex: Regex) -> Regex {
+		.or(self, regex)
+	}
+	
+	public func callAsFunction(_ input: String) -> Regex {
+		string(input)
+	}
+	
 	public func callAsFunction(_ input: Regex) -> Regex {
 		callAsFunction(.simple, input)
 	}
@@ -278,20 +302,68 @@ extension Regex {
 	}
 	
 	public func callAsFunction(_ input: () -> Int) -> Regex {
-		repeats(input())
+		count(input())
 	}
 	
 	public func callAsFunction(_ input: () -> ClosedRange<Int>) -> Regex {
-		repeats(input())
+		count(input())
 	}
 	
 	public func callAsFunction(_ input: () -> PartialRangeFrom<Int>) -> Regex {
-		repeats(input())
+		count(input())
 	}
 	
 	public func callAsFunction(_ input: () -> PartialRangeThrough<Int>) -> Regex {
-		repeats(input())
+		count(input())
 	}
+}
+
+extension Regex {
+	///\d - digit
+	public var d: Regex { digit }
+	///\D - notDigit
+	public var D: Regex { notDigit }
+	///\s - space
+	public var s: Regex { space }
+	///\S - notSpace
+	public var S: Regex { notSpace }
+	///\w - wordChar
+	public var w: Regex { wordChar }
+	///\W - notWordChar
+	public var W: Regex { notWordChar }
+	///\n - nextLine
+	public var n: Regex { nextLine }
+	///\r - carriageReturn
+	public var r: Regex { carriageReturn }
+	///\b - wordEdge
+	public var b: Regex { wordEdge }
+	///\B - notWordEdge
+	public var B: Regex { notWordEdge }
+	///\G - previous
+	public var G: Regex { previous }
+	
+	///\d - digit
+	public static var d: Regex { digit }
+	///\D - notDigit
+	public static var D: Regex { notDigit }
+	///\s - space
+	public static var s: Regex { space }
+	///\S - notSpace
+	public static var S: Regex { notSpace }
+	///\w - wordChar
+	public static var w: Regex { wordChar }
+	///\W - notWordChar
+	public static var W: Regex { notWordChar }
+	///\n - nextLine
+	public static var n: Regex { nextLine }
+	///\r - carriageReturn
+	public static var r: Regex { carriageReturn }
+	///\b - wordEdge
+	public static var b: Regex { wordEdge }
+	///\B - notWordEdge
+	public static var B: Regex { notWordEdge }
+	///\G - previous
+	public static var G: Regex { previous }
 }
 
 extension Regex {

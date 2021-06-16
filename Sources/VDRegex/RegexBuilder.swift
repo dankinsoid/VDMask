@@ -55,25 +55,25 @@ public enum RegexBuilder {
 		.string(string)
 	}
 	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> Int) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> ClosedRange<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> PartialRangeFrom<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
-	
-	@inlinable
-	public static func buildExpression(_ regexes: () -> PartialRangeThrough<Int>) -> Regex {
-		Regex().repeats(regexes())
-	}
+//	@inlinable
+//	public static func buildExpression(_ regexes: () -> Int) -> Regex {
+//		Regex().count(regexes())
+//	}
+//	
+//	@inlinable
+//	public static func buildExpression(_ regexes: () -> ClosedRange<Int>) -> Regex {
+//		Regex().count(regexes())
+//	}
+//	
+//	@inlinable
+//	public static func buildExpression(_ regexes: () -> PartialRangeFrom<Int>) -> Regex {
+//		Regex().count(regexes())
+//	}
+//	
+//	@inlinable
+//	public static func buildExpression(_ regexes: () -> PartialRangeThrough<Int>) -> Regex {
+//		Regex().count(regexes())
+//	}
 	
 	@inlinable
 	public static func create(from regexes: [Regex]) -> Regex {
@@ -116,6 +116,45 @@ public struct RegexSymbolsBuilder {
 	
 	@inlinable
 	public static func buildExpression(_ expression: Regex.SymbolsSet) -> [Regex.SymbolsSet] {
+		[expression]
+	}
+}
+
+@resultBuilder
+public struct RegexesBuilder {
+	
+	@inlinable
+	public static func buildBlock(_ components: [Regex]...) -> [Regex] {
+		Array(components.joined())
+	}
+	
+	@inlinable
+	public static func buildArray(_ components: [[Regex]]) -> [Regex] {
+		Array(components.joined())
+	}
+	
+	@inlinable
+	public static func buildEither(first component: [Regex]) -> [Regex] {
+		component
+	}
+	
+	@inlinable
+	public static func buildEither(second component: [Regex]) -> [Regex] {
+		component
+	}
+	
+	@inlinable
+	public static func buildOptional(_ component: [Regex]?) -> [Regex] {
+		component ?? []
+	}
+	
+	@inlinable
+	public static func buildLimitedAvailability(_ component: [Regex]) -> [Regex] {
+		component
+	}
+	
+	@inlinable
+	public static func buildExpression(_ expression: Regex) -> [Regex] {
 		[expression]
 	}
 }

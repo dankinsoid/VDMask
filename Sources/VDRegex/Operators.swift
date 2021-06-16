@@ -84,6 +84,6 @@ extension Regex {
 	}
 	
 	public static func |(_ lhs: Regex, _ rhs: Regex) -> Regex {
-		Regex("\(lhs.value)|\(rhs.value)")
+		.or(lhs, rhs)
 	}
 }

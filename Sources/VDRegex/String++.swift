@@ -20,6 +20,10 @@ extension StringProtocol {
 		return emailPredicate.evaluate(with: String(self))
 	}
 	
+	public func match(@RegexBuilder _ regex: () -> Regex) -> Bool {
+		match(regex())
+	}
+	
 	public func replacing<T: StringProtocol>(_ regex: Regex, with template: T) -> String {
 		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: nsRange, withTemplate: String(template)) ?? String(self)
 	}
