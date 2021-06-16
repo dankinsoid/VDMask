@@ -55,25 +55,25 @@ public enum RegexBuilder {
 		.string(string)
 	}
 	
-//	@inlinable
-//	public static func buildExpression(_ regexes: () -> Int) -> Regex {
-//		Regex().count(regexes())
-//	}
-//	
-//	@inlinable
-//	public static func buildExpression(_ regexes: () -> ClosedRange<Int>) -> Regex {
-//		Regex().count(regexes())
-//	}
-//	
-//	@inlinable
-//	public static func buildExpression(_ regexes: () -> PartialRangeFrom<Int>) -> Regex {
-//		Regex().count(regexes())
-//	}
-//	
-//	@inlinable
-//	public static func buildExpression(_ regexes: () -> PartialRangeThrough<Int>) -> Regex {
-//		Regex().count(regexes())
-//	}
+	@inlinable
+	public static func buildExpression(_ regexes: () -> Int) -> Regex {
+		Regex().count(regexes())
+	}
+	
+	@inlinable
+	public static func buildExpression(_ regexes: () -> ClosedRange<Int>) -> Regex {
+		Regex().count(regexes())
+	}
+	
+	@inlinable
+	public static func buildExpression(_ regexes: () -> PartialRangeFrom<Int>) -> Regex {
+		Regex().count(regexes())
+	}
+	
+	@inlinable
+	public static func buildExpression(_ regexes: () -> PartialRangeThrough<Int>) -> Regex {
+		Regex().count(regexes())
+	}
 	
 	@inlinable
 	public static func create(from regexes: [Regex]) -> Regex {
