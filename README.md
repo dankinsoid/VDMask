@@ -30,6 +30,12 @@ let phoneRegexReadable = Regex {
     Regex[0-9].count(2)
   }.count(2)
 }
+
+switch someString {
+case Regex.email: print("this is an email string")
+case Regex.digit.repeats: print("this is a number only string")
+default: break
+}
 ```
  ## Installation
  1. [Swift Package Manager](https://github.com/apple/swift-package-manager)
@@ -42,7 +48,7 @@ let phoneRegexReadable = Regex {
  let package = Package(
    name: "SomeProject",
    dependencies: [
-     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.4.0")
+     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.5.0")
    ],
    targets: [
     .target(name: "SomeProject", dependencies: ["VDRegex"])
