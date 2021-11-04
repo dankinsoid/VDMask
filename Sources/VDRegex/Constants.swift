@@ -117,7 +117,8 @@ extension Regex {
 	///(regex), (?>regex), (?:regex)
 	public static func group(_ group: Group = .simple, @RegexBuilder _ builder: () -> Regex) -> Regex { .group(group, builder()) }
 	
-	public static func modifier(_ modifier: Modifier) -> Regex { Regex("(?\(modifier.value))") }
+	public static func modifier(_ modifier: Modifier) -> Regex { Regex("(?\(modifier.value))")
+	}
 	
 	///(?(?=condition)then|else)
 	public static func `if`(look: Look, _ condition: Regex, then: Regex, else: Regex) -> Regex {

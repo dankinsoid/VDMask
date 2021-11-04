@@ -72,6 +72,7 @@ extension Regex.Modifier {
 	///i
 	public static var caseInsensitive: Regex.Modifier { .i }
 	
+	///case insensitive
 	public var i: Regex.Modifier { Regex.Modifier(value + Regex.Modifier.i.value) }
 	public var m: Regex.Modifier { Regex.Modifier(value + Regex.Modifier.m.value) }
 	public var s: Regex.Modifier { Regex.Modifier(value + Regex.Modifier.s.value) }

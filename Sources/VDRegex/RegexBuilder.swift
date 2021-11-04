@@ -41,8 +41,8 @@ public enum RegexBuilder {
 	}
 	
 	@inlinable
-	public static func buildExpression(_ expression: Regex) -> Regex {
-		expression
+	public static func buildExpression<R: RegexConvertable>(_ expression: R) -> Regex {
+		expression.asRegex
 	}
 	
 	@inlinable

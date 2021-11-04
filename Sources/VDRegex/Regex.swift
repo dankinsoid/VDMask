@@ -8,9 +8,10 @@
 import Foundation
 
 @dynamicMemberLookup
-public struct Regex: Equatable, Hashable, Codable, ExpressibleByStringLiteral, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation, CustomStringConvertible {
+public struct Regex: Equatable, Hashable, Codable, ExpressibleByStringLiteral, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation, CustomStringConvertible, StringInitable, RegexConvertable {
 	public var value: String
 	public var description: String { value }
+	public var asRegex: Regex { self }
 	
 	public init() {
 		value = ""
@@ -32,6 +33,10 @@ public struct Regex: Equatable, Hashable, Codable, ExpressibleByStringLiteral, E
 		self.init(elements)
 	}
 	
+	public init?(string: String) {
+		self = Regex(string)
+	}
+	
 	public init(from decoder: Decoder) throws {
 		value = try String(from: decoder)
 	}
@@ -42,11 +47,5 @@ public struct Regex: Equatable, Hashable, Codable, ExpressibleByStringLiteral, E
 	
 	public func encode(to encoder: Encoder) throws {
 		try value.encode(to: encoder)
-	}
-}
-
-extension Regex {
-	public var ns: NSRegularExpression? {
-		try? NSRegularExpression(pattern: value)
 	}
 }

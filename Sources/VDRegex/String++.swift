@@ -7,7 +7,7 @@
 
 import Foundation
 
-public func ~=<T: StringProtocol>(lhs: Regex, rhs: T) -> Bool {
+public func ~=<R: RegexConvertable, T: StringProtocol>(lhs: R, rhs: T) -> Bool {
 	rhs.match(lhs)
 }
 
@@ -15,8 +15,8 @@ extension StringProtocol {
 	
 	private var nsRange: NSRange { NSRange(startIndex..., in: self) }
 	
-	public func match(_ regex: Regex) -> Bool {
-		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.value)
+	public func match<R: RegexConvertable>(_ regex: R) -> Bool {
+		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.asRegex.value)
 		return emailPredicate.evaluate(with: String(self))
 	}
 	
@@ -24,23 +24,23 @@ extension StringProtocol {
 		match(regex())
 	}
 	
-	public func replacing<T: StringProtocol>(_ regex: Regex, with template: T) -> String {
+	public func replacing<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String {
 		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: nsRange, withTemplate: String(template)) ?? String(self)
 	}
 	
-	public func matches<T: StringProtocol>(_ regex: Regex, with template: T) -> [String] {
+	public func matches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> [String] {
 		regex.ns?.matches(in: String(self), options: [], range: nsRange).map {
 			substring(with: $0.range)
 		} ?? []
 	}
 	
-	public func firstMatch<T: StringProtocol>(_ regex: Regex, with template: T) -> String? {
+	public func firstMatch<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String? {
 		regex.ns?.firstMatch(in: String(self), options: [], range: nsRange).map {
 			substring(with: $0.range)
 		}
 	}
 	
-	public func numberOfMatches<T: StringProtocol>(_ regex: Regex, with template: T) -> Int {
+	public func numberOfMatches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> Int {
 		regex.ns?.numberOfMatches(in: String(self), options: [], range: nsRange) ?? 0
 	}
 	
@@ -51,11 +51,20 @@ extension StringProtocol {
 			return (String(self) as NSString).substring(with: range)
 		}
 	}
+	
+	func dd() {
+//		"int: 93"
+//		str.replace("int: (Int.self)") { int in "int: \(int + 1)" }
+//		str.replaceValue("int: (Int.self)") { $0 + 1 }
+//		str.values("int: (Int.self)") -> [Int]
+//		Regex("int: (Int.self)").with(int) -> String
+//		str.formatted[regex]
+//		RegexFormatter(regex)
+	}
 }
 
-
 extension String {
-	var regexShielding: String {
+	public var regexShielding: String {
 		map { CharacterSet.regexSpecial.contains($0) ? "\\\($0)" : String($0) }.joined()
 			.replacingOccurrences(of: "\n", with: "\\n")
 	}
