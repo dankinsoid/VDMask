@@ -49,10 +49,6 @@ public prefix func ^(_ rhs: Regex) -> Regex {
 	Regex("^" + rhs.value)
 }
 
-public prefix func ^(_ rhs: Regex.SymbolsSet) -> Regex.SymbolsSet {
-	"^" + rhs
-}
-
 public prefix func !(_ rhs: Regex.SymbolsSet) -> Regex.SymbolsSet {
 	^rhs
 }

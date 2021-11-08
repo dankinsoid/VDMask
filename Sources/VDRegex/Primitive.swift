@@ -1,127 +1,174 @@
-////
-////  File.swift
-////
-////
-////  Created by Данил Войдилов on 04.11.2021.
-////
 //
-//import Foundation
+//  File.swift
 //
-//indirect enum _Regex: RawRepresentable {
-//	case sequence([_Regex])
-//	///()
-//	case group(Regex.Group, _Regex)
-//	///[]
-//	case symbolsSet([Regex.SymbolsSet])
-//	///`.`
-//	case any
-//	///\d
-//	case digit
-//	///\D
-//	case notDigit
-//	///\s
-//	case space
-//	///\S
-//	case notSpace
-//	///\w
-//	case wordChar
-//	///\W
-//	case notWordChar
-//	///\n
-//	case nextLine
-//	///\r
-//	case carriageReturn
-//	///\b
-//	case wordEdge
-//	///\B
-//	case notWordEdge
-//	///\G
-//	case previous
-//	///^
-//	case textBegin
-//	///$
-//	case textEnd
-//	///`?`
-//	case oneOrNone(quantification: Regex.Quantification = .default) //-> Regex { Regex("?" + quantification.rawValue) }
-//	///`+`
-//	case oneAndMore(quantification: Regex.Quantification = .default) //-> Regex { Regex("+" + quantification.rawValue) }
-//	///`*`
-//	case anyCount(quantification: Regex.Quantification = .default) //-> Regex { Regex("*" + quantification.rawValue) }	///{count}
-//	///{n}
-//	case count(_ count: Int, _ quantification: Regex.Quantification = .default) //		Regex("{\(count)}" + quantification.rawValue
-//	///{min,max}
-//	case countRange(_ range: ClosedRange<Int>, _ quantification: Regex.Quantification = .default)// -> Regex { Regex("{\(range.lowerBound),\(range.upperBound)}" + quantification.rawValue)
-//	///{min,}
-//	case countFrom(_ range: Int, _ quantification: Regex.Quantification = .default) //-> Regex { Regex("{\(range.lowerBound),}" + quantification.rawValue)}
-//	///{,max}
-//	case countTo(_ range: Int, _ quantification: Regex.Quantification = .default) //-> Regex { Regex("{,\(range.upperBound)}" + quantification.rawValue) }
 //
-////	case count(_ range: ClosedRange<Int>, _ quantification: Regex.Quantification = .default)// -> Regex { Regex("{\(range.lowerBound),\(range.upperBound)}" + quantification.rawValue)
-////	///{min,}
-////	case count(_ range: PartialRangeFrom<Int>, _ quantification: Regex.Quantification = .default) //-> Regex { Regex("{\(range.lowerBound),}" + quantification.rawValue)}
-////	///{,max}
-////	case count(_ range: PartialRangeThrough<Int>, _ quantification: Regex.Quantification = .default) //-> Regex { Regex("{,\(range.upperBound)}" + quantification.rawValue) }
-//	///\number
-//	case found(_ number: Int) //-> Regex { Regex("\\\(number)") }
-//	///(?<=regex), (?=regex), (?<!regex), (?!regex)
-//	case look(_ look: Regex.Look, _ regex: _Regex)// -> Regex { Regex("(\(look.rawValue)\(regex))") }
-//	///\Qstring\E
-//	case shielded(_ string: String) //Regex((string.count > 3 ? "\\Q\(string)\\E" : string.regexShielding))
-//	///(?modifier)
-//	case modifier(_ modifier: Regex.Modifier)// -> Regex { Regex("(?\(modifier.value))")
-//	///(?(?=condition)then|else)
-//	case `if`(look: Regex.Look, _ condition: _Regex, then: _Regex, else: _Regex)// -> Regex { Regex("(?\(Regex.look(look, condition))\(then.value)|\(`else`.value))") }
-//	///(?(group)then|else)
-//	case `if`(group: Int, then: _Regex, else: _Regex)//-> Regex {Regex("(?\(group)\(then.value)|\(`else`.value))")
-//	///regex0|regex1
-//	case or(_ regexes: [_Regex]) //-> Regex {		Regex(regexes.map { $0.value }.joined(separator: "|")) }
+//  Created by Данил Войдилов on 04.11.2021.
 //
-//	var rawValue: String {
-//		switch self {
-//		case .sequence(let regexes): return regexes.map { $0.rawValue }.joined()
-//		case .group(let group, let regex): return "(\(group.value)\(regex.rawValue))"
-//		case .symbolsSet(let array): return "[\(array.map { $0.value }.joined())]"
-//		case .any: return "."
-//		case .digit: return "\\d"
-//		case .notDigit: return "\\D"
-//		case .space: return "\\s"
-//		case .notSpace: return "\\S"
-//		case .wordChar: return "\\w"
-//		case .notWordChar: return "\\W"
-//		case .nextLine: return "\\n"
-//		case .carriageReturn: return "\\r"
-//		case .wordEdge: return "\\b"
-//		case .notWordEdge: return "\\B"
-//		case .previous: return "\\G"
-//		case .textBegin: return "^"
-//		case .textEnd: return "$"
-//		case .oneOrNone(let quantification):
-//		case .oneAndMore(let quantification):
-//		case .anyCount(let quantification):
-//		case .count(let _, let quantification):
-//		case .countRange(let _, let quantification):
-//		case .countFrom(let _, let quantification):
-//		case .countTo(let _, let quantification):
-//		case .found(let _):
-//		case .look(let _, let _):
-//		case .shielded(let _):
-//		case .modifier(let modifier):
-//		case .if(let look, let _, let then, let else, let regex):
-//		case .if(let group, let then, let else, let regex):
-//		case .or(let regexes):
-//		}
-//	}
-//
-//	init?(rawValue: String) {
-//		return nil
-//	}
-//
-////	func scan(string: String, index: inout String.Index) -> Bool {
-////		switch self {
-////		case .group(let group, let _regex):
-////			return false
-////		case .symbolsSet(let array):
-////			return false
-////		}
-////	}
-//}
+
+import Foundation
+
+indirect enum _Regex: RawRepresentable, ExpressibleByStringInterpolation, Codable {
+	case sequence([_Regex])
+	case string(String)
+	///()
+	case group(Regex.Group, _Regex)
+	///[]
+	case symbolsSet([Regex.SymbolsSet])
+	///`.` matches any character (except for line terminators)
+	case any
+	///\d
+	case digit
+	///\D
+	case notDigit
+	///\s
+	case space
+	///\S
+	case notSpace
+	///\w
+	case wordChar
+	///\W
+	case notWordChar
+	///\n
+	case nextLine
+	///\r
+	case carriageReturn
+	///\b
+	case wordEdge
+	///\B
+	case notWordEdge
+	///\G
+	case previous
+	///^
+	case textBegin
+	///$
+	case textEnd
+	///`?`
+	case oneOrNone(_ regex: _Regex, quantification: Regex.Quantification = .default)
+	///`+`
+	case oneAndMore(_ regex: _Regex, quantification: Regex.Quantification = .default)
+	///`*`
+	case anyCount(_ regex: _Regex, quantification: Regex.Quantification = .default)
+	///{n}
+	case count(_ count: Int, _ regex: _Regex, _ quantification: Regex.Quantification = .default)
+	///{min,max}
+	case countRange(_ range: ClosedRange<Int>, _ regex: _Regex, _ quantification: Regex.Quantification = .default)
+	///{min,}
+	case countFrom(_ min: Int, _ regex: _Regex, _ quantification: Regex.Quantification = .default)
+	///{,max}
+	case countTo(_ max: Int, _ regex: _Regex, _ quantification: Regex.Quantification = .default)
+	///\number
+	case found(_ number: Int)
+	///(?<=regex), (?=regex), (?<!regex), (?!regex)
+	case look(_ look: Regex.Look, _ regex: _Regex)
+	///\Qstring\E
+	case shielded(_ string: String)
+	///(?modifier)
+	case modifier(_ modifier: Regex.Modifiers)
+	///(?(?=condition)then|else)
+	case ifLook(_ look: Regex.Look, _ condition: _Regex, then: _Regex, `else`: _Regex)
+	///(?(group)then|else)
+	case `if`(group: Int, then: _Regex, else: _Regex)
+	///regex0|regex1
+	case or(_ regexes: [_Regex])
+	///(?#comment)
+	case comment(String)
+	
+	var rawValue: String {
+		switch self {
+		case .sequence(let regexes): return regexes.map { $0.rawValue }.joined()
+		case .string(let string): return string.regexShielding
+		case .group(let group, let regex): return "(\(group.value)\(regex.rawValue))"
+		case .symbolsSet(let array): return "[\(array.map { $0.value }.joined())]"
+		case .any: return "."
+		case .digit: return "\\d"
+		case .notDigit: return "\\D"
+		case .space: return "\\s"
+		case .notSpace: return "\\S"
+		case .wordChar: return "\\w"
+		case .notWordChar: return "\\W"
+		case .nextLine: return "\\n"
+		case .carriageReturn: return "\\r"
+		case .wordEdge: return "\\b"
+		case .notWordEdge: return "\\B"
+		case .previous: return "\\G"
+		case .textBegin: return "^"
+		case .textEnd: return "$"
+		case .oneOrNone(let regex, let quantification): return regex.groupedIfNeeded.rawValue + "?" + quantification.rawValue
+		case .oneAndMore(let regex, let quantification): return regex.groupedIfNeeded.rawValue + "+" + quantification.rawValue
+		case .anyCount(let regex, let quantification): return regex.groupedIfNeeded.rawValue + "*" + quantification.rawValue
+		case .count(let count, let regex, let quantification): return regex.groupedIfNeeded.rawValue + "{\(count)}" + quantification.rawValue
+		case .countRange(let range, let regex, let quantification): return regex.groupedIfNeeded.rawValue + "{\(range.lowerBound),\(range.upperBound)}" + quantification.rawValue
+		case .countFrom(let min, let regex, let quantification): return regex.groupedIfNeeded.rawValue + "{\(min),}" + quantification.rawValue
+		case .countTo(let max, let regex, let quantification): return regex.groupedIfNeeded.rawValue + "{,\(max)}" + quantification.rawValue
+		case .found(let i): return "\\\(i)"
+		case .look(let look, let regex): return "(\(look.rawValue)\(regex.rawValue))"
+		case .shielded(let string): return "\\Q\(string)\\E"
+		case .modifier(let modifier): return "(?\(modifier.value))"
+		case .ifLook(let look, let condition, let then, let `else`): return "(?(\(look.rawValue)\(condition.rawValue))\(then.rawValue)|\(`else`.rawValue))"
+		case .if(let group, let then, let `else`): return "(?\(group)\(then.rawValue)|\(`else`.rawValue))"
+		case .or(let regexes): return regexes.map { $0.rawValue }.joined(separator: "|")
+		case .comment(let comment): return "(?#\(comment))"
+		}
+	}
+	
+	init?(rawValue: String) {
+		try? self.init(pattern: rawValue)
+	}
+	
+	init(pattern: String) throws {
+		#warning("TODO")
+		self = .string("")
+	}
+	
+	init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let pattern = try container.decode(String.self)
+		do {
+			self = try _Regex(pattern: pattern)
+		} catch {
+			throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Invalid pattern \(pattern)", underlyingError: error))
+		}
+	}
+	
+	init(stringLiteral value: String) {
+		self = .string(value)
+	}
+	
+	init(stringInterpolation: DefaultStringInterpolation) {
+		self = .string(String(stringInterpolation: stringInterpolation))
+	}
+	
+	var needBeGrouped: Bool {
+		switch self {
+		case .sequence(let array):
+			if array.count == 1 { return array[0].needBeGrouped }
+			return !array.isEmpty
+		case .string(let string):
+			return string.regexShielding.count > 1
+		case .or:
+			return true
+		case .group, .symbolsSet, .any, .digit, .notDigit, .space, .notSpace, .wordChar, .notWordChar, .nextLine, .carriageReturn, .wordEdge, .notWordEdge, .previous, .textBegin, .textEnd, .oneOrNone, .oneAndMore, .anyCount, .count, .countRange, .countFrom, .countTo, .found, .look, .shielded, .modifier, .ifLook, .if:
+			return false
+		}
+	}
+	
+	var groupedIfNeeded: _Regex {
+		if needBeGrouped {
+			return .group(.simple, self)
+		}
+		return self
+	}
+	
+	func encode(to encoder: Encoder) throws {
+		try rawValue.encode(to: encoder)
+	}
+	
+	///(regex)
+	static func group(_ regex: _Regex) -> _Regex { .group(.simple, regex) }
+	///{min,max}
+	static func count(_ range: ClosedRange<Int>, _ regex: _Regex, quantification: Regex.Quantification = .default) -> _Regex { .countRange(range, regex, quantification) }
+	///{min,}
+	static func count(_ range: PartialRangeFrom<Int>, _ regex: _Regex, quantification: Regex.Quantification = .default) -> _Regex { .countFrom(range.lowerBound, regex, quantification) }
+	///{,max}
+	static func count(_ range: PartialRangeThrough<Int>, _ regex: _Regex, quantification: Regex.Quantification = .default) -> _Regex { .countTo(range.upperBound, regex, quantification) }
+}

@@ -69,14 +69,3 @@ extension String {
 			.replacingOccurrences(of: "\n", with: "\\n")
 	}
 }
-
-extension CharacterSet {
-	
-	public static var regexSpecial: CharacterSet {
-		CharacterSet(charactersIn: "[]\\/^$.|?*+(){}")
-	}
-	
-	func contains(_ character: Character) -> Bool {
-		character.unicodeScalars.allSatisfy(contains)
-	}
-}

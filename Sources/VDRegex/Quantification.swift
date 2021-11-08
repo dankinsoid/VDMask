@@ -9,7 +9,7 @@ import Foundation
 
 extension Regex {
 	public enum Quantification: String {
-		case lazy = "?", jealous = "+", greedy = ""
+		case lazy = "?", possessive = "+", greedy = ""
 		
 		public static var `default`: Quantification { .greedy }
 	}

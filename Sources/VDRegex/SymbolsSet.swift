@@ -9,39 +9,74 @@ import Foundation
 
 extension Regex {
 	
-	public struct SymbolsSet: Equatable, Hashable, ExpressibleByStringLiteral, ExpressibleByStringInterpolation, ExpressibleByIntegerLiteral, ExpressibleByArrayLiteral {
-		public var value: String
+	public struct SymbolsSet: OptionSet, Equatable, Hashable, ExpressibleByStringLiteral, ExpressibleByStringInterpolation {
+		public var rawValue: Set<ClosedRange<Character>>
 		
-		public init(stringLiteral value: StringLiteralType) {
-			self.value = value
+		public init(rawValue: Set<ClosedRange<Character>>) {
+			self.rawValue = rawValue
 		}
 		
-		public init(arrayLiteral elements: SymbolsSet...) {
-			self = SymbolsSet(elements)
+		public init() {
+			rawValue = []
+		}
+		
+		public mutating func formUnion(_ other: __owned Regex.SymbolsSet) {
+			rawValue = Set(rawValue.union(other.rawValue).united)
+		}
+		
+		public mutating func formIntersection(_ other: Regex.SymbolsSet) {
+			
+		}
+		
+		public mutating func formSymmetricDifference(_ other: __owned Regex.SymbolsSet) {
+			
+		}
+		
+		public var value: String {
+			"[" + rawValue.map {
+				$0.lowerBound == $0.upperBound ? "\($0.lowerBound)" : "\($0.lowerBound)-\($0.upperBound)"
+			}
+			.joined() + "]"
+		}
+		
+		public init(stringLiteral value: StringLiteralType) {
+			self = SymbolsSet(value)
 		}
 		
 		public init(_ elements: [SymbolsSet]) {
-			value = elements.map { $0.value }.joined()
+			self = elements.reduce([]) { $0.union($1) }
 		}
 		
 		public init(_ string: String) {
-			value = string
+			rawValue = Set(string.map { $0...$0 })
 		}
 		
-		public init(integerLiteral value: Int) {
-			self.value = "\(value)"
-		}
-		
-		public static func -(_ lhs: SymbolsSet, _ rhs: SymbolsSet) -> SymbolsSet {
-			SymbolsSet("\(lhs.value)-\(rhs.value)")
-		}
-		
-		public static func ...(_ lhs: SymbolsSet, _ rhs: SymbolsSet) -> SymbolsSet {
-			lhs - rhs
+		public func contains(_ character: Character) -> Bool {
+			rawValue.contains {
+				$0.contains(character)
+			}
 		}
 		
 		public static func +(_ lhs: SymbolsSet, _ rhs: SymbolsSet) -> SymbolsSet {
-			SymbolsSet(lhs.value + rhs.value)
+			lhs.union(rhs)
+		}
+		
+		public var inverted: SymbolsSet {
+			SymbolsSet(
+				rawValue: Set(
+					rawValue.united.reduce(into: [Character.first...Character.last]) { result, range in
+						let i = result.count - 1
+						if let next = range.upperBound.next {
+							result.append(next...result[result.count - 1].upperBound)
+						}
+						if let prev = range.lowerBound.prev {
+							result[i] = result[i].lowerBound...prev
+						} else {
+							result.removeLast()
+						}
+					}
+				)
+			)
 		}
 		
 		///[:alnum:] - Alphanumeric characters, [A-Za-z0-9]
@@ -68,5 +103,45 @@ extension Regex {
 		public static var uppercase: SymbolsSet { "[:upper:]" }
 		///[:xdigit:] - Hexadecimal digits, [A-Fa-f0-9]
 		public static var hex: SymbolsSet { "[:xdigit:]" }
+	}
+}
+
+public func -(_ lhs: Character, _ rhs: Character) -> Regex.SymbolsSet {
+	Regex.SymbolsSet(rawValue: [lhs...rhs])
+}
+
+public prefix func ^(_ rhs: Regex.SymbolsSet) -> Regex.SymbolsSet {
+	rhs.inverted
+}
+
+extension Character {
+	static var first: Character { Character(Unicode.Scalar.first) }
+	static var last: Character { Character(Unicode.Scalar.last) }
+	
+	var prev: Character? {
+		unicodeScalars.first.flatMap { $0.value > 0 ? UnicodeScalar($0.value - 1).map { Character($0) } : nil }
+	}
+	var next: Character? {
+		unicodeScalars.first.flatMap { UnicodeScalar($0.value + 1).map { Character($0) } }
+	}
+}
+
+extension Unicode.Scalar {
+	public static var first: Unicode.Scalar { Unicode.Scalar(0) }
+	public static var last: Unicode.Scalar { "\u{0010FFFF}" }
+}
+
+extension Collection where Element == ClosedRange<Character> {
+	
+	var united: [ClosedRange<Character>] {
+		sorted(by: { $0.lowerBound < $1.lowerBound }).reduce(into: []) { partialResult, range in
+			if let upper = partialResult.last?.upperBound, upper >= range.lowerBound {
+				if range.upperBound > upper {
+					partialResult[partialResult.count - 1] = partialResult[partialResult.count - 1].lowerBound...range.upperBound
+				}
+			} else {
+				partialResult.append(range)
+			}
+		}
 	}
 }
