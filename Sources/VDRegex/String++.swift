@@ -7,22 +7,22 @@
 
 import Foundation
 
-public func ~=<R: RegexConvertable, T: StringProtocol>(lhs: R, rhs: T) -> Bool {
-	rhs.match(lhs)
-}
+//public func ~=<R: RegexConvertable, T: StringProtocol>(lhs: R, rhs: T) -> Bool {
+//	rhs.match(lhs)
+//}
 
 extension StringProtocol {
 	
 	private var nsRange: NSRange { NSRange(startIndex..., in: self) }
 	
-	public func match<R: RegexConvertable>(_ regex: R) -> Bool {
-		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.asRegex.value)
-		return emailPredicate.evaluate(with: String(self))
-	}
-	
-	public func match(@RegexBuilder _ regex: () -> Regex) -> Bool {
-		match(regex())
-	}
+//	public func match<R: RegexConvertable>(_ regex: R) -> Bool {
+//		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.asRegex.value)
+//		return emailPredicate.evaluate(with: String(self))
+//	}
+//
+//	public func match(@RegexBuilder _ regex: () -> Regex) -> Bool {
+//		match(regex())
+//	}
 	
 	public func replacing<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String {
 		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: nsRange, withTemplate: String(template)) ?? String(self)

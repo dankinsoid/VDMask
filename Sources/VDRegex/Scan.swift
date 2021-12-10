@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension _Regex {
+extension Regex {
 	
 	func scan(string: String, context: inout RegexScanContext) throws {
 		switch self {
@@ -132,37 +132,37 @@ extension _Regex {
 			}
 			
 		case .oneOrNone(let regex, let quantification):
-			try _Regex.countRange(0...1, regex, quantification).scan(string: string, context: &context)
+			try Regex.repeat(0...1, regex, quantification: quantification).scan(string: string, context: &context)
 			
 		case .oneAndMore(let regex, let quantification):
-			try _Regex.countFrom(1, regex, quantification).scan(string: string, context: &context)
+			try Regex.repeat(1..., regex, quantification: quantification).scan(string: string, context: &context)
 			
 		case .anyCount(let regex, let quantification):
-			try _Regex.countFrom(0, regex, quantification).scan(string: string, context: &context)
+			try Regex.repeat(0..., regex, quantification: quantification).scan(string: string, context: &context)
 			
-		case .count(let count, let regex, let quantification):
+		case .repeat(let count, let regex, let quantification):
 			guard count > 0 else { break }
 			for _ in 0..<count {
 				try regex.scan(string: string, context: &context)
 			}
 			
-		case .countRange(let range, let regex, let quantification):
+		case .repeatIn(let range, let regex, let quantification):
 			let start = context.index
 			for i in range {
-				try _Regex.count(i, regex, quantification).scan(string: string, context: &context)
+				try Regex.repeat(i, regex, quantification).scan(string: string, context: &context)
 			}
 			
-		case .countFrom(let min, let regex, let quantification):
+		case .repeatFrom(let min, let regex, let quantification):
 			
 			 
-		case .countTo(let max, let regex, let quantification):
+		case .repeatTo(let max, let regex, let quantification):
 			guard max >= 0 else { break }
-			try _Regex.countRange(0...max, regex, quantification).scan(string: string, context: &context)
+			try Regex.repeatIn(0...max, regex, quantification).scan(string: string, context: &context)
 			
 		case .found(let i):
 			let found = context.foundGroups[context.deep] ?? []
 			if i > 0, i <= found.count {
-				try _Regex.string(String(string[found[i - 1]])).scan(string: string, context: &context)
+				try Regex.string(String(string[found[i - 1]])).scan(string: string, context: &context)
 			} else {
 				throw RegexScanError.tooLargeIndex(i)
 			}

@@ -8,6 +8,16 @@
 import Foundation
 
 extension Regex {
+	
+	//	///[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}
+	
+//	Regex
+//		.repeat(.any(of: ["A"..."Z", "0"..."9", "a"..."z", "._%+-"]))
+//		.string("@")
+//		.repeat(.any(of: ["A"..."Z", "0"..."9", "a"..."z", "._"]))
+//		.string(".")
+//		.repeat(2...64, .any(of: ["A"..."Z", "a"..."z"]))
+	
 //https://github.com/eneko/RegEx
 //	public final class Iterator: IteratorProtocol {
 //		let regex: Regex
