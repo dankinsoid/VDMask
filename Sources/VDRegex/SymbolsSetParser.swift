@@ -13,6 +13,10 @@ struct SymbolsSetParser {
 	var parseConstants = true
 	 
 	func parse(string: String, context: inout Context) throws {
+		guard string.hasPrefix("[") else {
+			throw ParserError.incorrectPattern
+		}
+		context.index = string.index(after: context.index)
 		defer {
 			if let cached = context.cache {
 				context.parsed.append(cached...cached)
@@ -54,6 +58,7 @@ struct SymbolsSetParser {
 				context.index = string.index(after: context.index)
 			}
 		}
+		throw ParserError.incorrectPattern
 	}
 	
 	private func add(char: Character, string: String, parser: inout Context) throws {

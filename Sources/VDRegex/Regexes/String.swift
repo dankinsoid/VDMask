@@ -10,11 +10,23 @@ import Foundation
 struct RegexString: RegexType {
 	var pattern: String
 	
-	init(pattern: String) throws {
+	init(pattern: String, index: inout String) throws {
 		self.init(pattern)
 	}
 	
-	init(_ pattern: String) {
+	init(_ pattern: String, index: inout String.Index) {
+		var result = ""
+		var isShielded = false
+		while index < pattern.endIndex, !CharacterSet.regexSpecial.contains(pattern[index]) || isShielded {
+			if pattern[index] == "\\", !isShielded {
+				result += pattern[index]
+				isShielded = true
+			} else {
+				isShielded = false
+				result += pattern[index]
+			}
+			index = pattern.index(after: index)
+		}
 		self.pattern = pattern.regexShielding
 	}
 	

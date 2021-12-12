@@ -55,19 +55,10 @@ extension Regex {
 		}
 		
 		public init(pattern: String) throws {
-			guard pattern.hasPrefix("["), pattern.hasSuffix("]") else {
-				throw RegexScanError.stringTooShort
-			}
-			let string = String(pattern.dropFirst().dropLast())
-			if let const = Element.constants[string] {
-				self = [const]
-			} else {
-				var context = SymbolsSetParser.Context(index: string.startIndex)
-				try SymbolsSetParser(parseConstants: false).parse(string: string, context: &context)
-				if context.index < pattern.endIndex {
-					throw ParserError.incorrectPattern
-				}
-				self = context.set
+			var index = pattern.startIndex
+			try self.init(pattern: pattern, index: &index)
+			if index < pattern.endIndex {
+				throw ParserError.incorrectPattern
 			}
 		}
 		

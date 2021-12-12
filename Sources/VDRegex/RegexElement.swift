@@ -9,7 +9,7 @@ import Foundation
 
 public protocol RegexType {
 	var pattern: String { get }
-	init(pattern: String) throws
+	init(pattern: String, index: inout String.Index) throws
 	func scan(string: String, context: inout RegexScanContext) throws
 }
 
@@ -26,12 +26,12 @@ extension Regex {
 	}
 	
 	public static func extend<R: RegexType>(with regex: R) {
-		regexes.append({ try .init(regex: R.init(pattern: $0)) })
+		regexes.insert({ try .init(regex: R.init(pattern: $0, index: &$1)) }, at: 0)
 	}
 	
-	static var regexes: [(String) throws -> Regex] = [
-		{ try .init(regex: SymbolsSet(pattern: $0)) },
-		{ try .init(regex: RegexString(pattern: $0)) }
+	static var regexes: [(String, inout String.Index) throws -> Regex] = [
+		{ try .init(regex: SymbolsSet(pattern: $0, index: &$1)) },
+		{ try .init(regex: RegexString(pattern: $0, index: &$1)) }
 	]
 	
 	struct Element: Equatable, Hashable {
