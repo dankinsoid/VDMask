@@ -8,9 +8,9 @@
 import Foundation
 
 extension Regex {
-	public enum Quantification: String {
+	public enum QuantifierType: String {
 		case lazy = "?", possessive = "+", greedy = ""
 		
-		public static var `default`: Quantification { .greedy }
+		public static var `default`: QuantifierType { .greedy }
 	}
 }

@@ -13,7 +13,7 @@ import Foundation
 
 extension StringProtocol {
 	
-	private var nsRange: NSRange { NSRange(startIndex..., in: self) }
+//	private var nsRange: NSRange { NSRange(startIndex..., in: self) }
 	
 //	public func match<R: RegexConvertable>(_ regex: R) -> Bool {
 //		let emailPredicate = NSPredicate(format: "SELF MATCHES %@", regex.asRegex.value)
@@ -24,33 +24,33 @@ extension StringProtocol {
 //		match(regex())
 //	}
 	
-	public func replacing<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String {
-		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: nsRange, withTemplate: String(template)) ?? String(self)
-	}
-	
-	public func matches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> [String] {
-		regex.ns?.matches(in: String(self), options: [], range: nsRange).map {
-			substring(with: $0.range)
-		} ?? []
-	}
-	
-	public func firstMatch<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String? {
-		regex.ns?.firstMatch(in: String(self), options: [], range: nsRange).map {
-			substring(with: $0.range)
-		}
-	}
-	
-	public func numberOfMatches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> Int {
-		regex.ns?.numberOfMatches(in: String(self), options: [], range: nsRange) ?? 0
-	}
-	
-	private func substring(with range: NSRange) -> String {
-		if #available(iOS 13, *) {
-			return Range(range, in: self).map { String(self[$0]) } ?? ""
-		} else {
-			return (String(self) as NSString).substring(with: range)
-		}
-	}
+//	public func replacing<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String {
+//		regex.ns?.stringByReplacingMatches(in: String(self), options: [], range: nsRange, withTemplate: String(template)) ?? String(self)
+//	}
+//
+//	public func matches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> [String] {
+//		regex.ns?.matches(in: String(self), options: [], range: nsRange).map {
+//			substring(with: $0.range)
+//		} ?? []
+//	}
+//
+//	public func firstMatch<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> String? {
+//		regex.ns?.firstMatch(in: String(self), options: [], range: nsRange).map {
+//			substring(with: $0.range)
+//		}
+//	}
+//
+//	public func numberOfMatches<R: RegexConvertable, T: StringProtocol>(_ regex: R, with template: T) -> Int {
+//		regex.ns?.numberOfMatches(in: String(self), options: [], range: nsRange) ?? 0
+//	}
+//
+//	private func substring(with range: NSRange) -> String {
+//		if #available(iOS 13, *) {
+//			return Range(range, in: self).map { String(self[$0]) } ?? ""
+//		} else {
+//			return (String(self) as NSString).substring(with: range)
+//		}
+//	}
 	
 	func dd() {
 //		"int: 93"

@@ -13,7 +13,7 @@ public protocol RegexConvertable {
 
 extension RegexConvertable {
 	public var ns: NSRegularExpression? {
-		try? NSRegularExpression(pattern: asRegex.value)
+		try? NSRegularExpression(pattern: asRegex.pattern)
 	}
 	
 	public var countOfGroups: Int {
@@ -21,11 +21,11 @@ extension RegexConvertable {
 	}
 }
 
-extension NSRegularExpression: RegexConvertable {
-	public var asRegex: Regex { Regex(pattern) }
-}
+//extension NSRegularExpression: RegexConvertable {
+//	public var asRegex: Regex { Regex(pattern) }
+//}
 
-public protocol RegexType {
+public protocol RegexValueType {
 	static var regex: Regex { get }
 }
 
@@ -33,47 +33,47 @@ public protocol StringInitable {
 	init?(string: String)
 }
 
-extension RegexType where Self: StringProtocol {
+extension RegexValueType where Self: StringProtocol {
 	public static var regex: Regex { Regex(".*") }
 }
 
-extension RegexType where Self: UnsignedInteger {
+extension RegexValueType where Self: UnsignedInteger {
 	public static var regex: Regex { Regex("[0-9]*") }
 }
 
-extension RegexType where Self: SignedInteger {
+extension RegexValueType where Self: SignedInteger {
 	public static var regex: Regex { Regex("[-+]?[0-9]*") }
 }
 
-extension RegexType where Self: FloatingPoint {
+extension RegexValueType where Self: FloatingPoint {
 	public static var regex: Regex { Regex("[+-]?([0-9]*[.])?[0-9]+") }
 }
 
-extension String: RegexType, StringInitable {
+extension String: RegexValueType, StringInitable {
 	public init?(string: String) {
 		self = string
 	}
 }
 
-extension Int: RegexType, StringInitable {
+extension Int: RegexValueType, StringInitable {
 	public init?(string: String) {
 		self.init(string)
 	}
 }
 
-extension UInt: RegexType, StringInitable {
+extension UInt: RegexValueType, StringInitable {
 	public init?(string: String) {
 		self.init(string)
 	}
 }
 
-extension Double: RegexType, StringInitable {
+extension Double: RegexValueType, StringInitable {
 	public init?(string: String) {
 		self.init(string)
 	}
 }
 
-extension Float: RegexType, StringInitable {
+extension Float: RegexValueType, StringInitable {
 	public init?(string: String) {
 		self.init(string)
 	}

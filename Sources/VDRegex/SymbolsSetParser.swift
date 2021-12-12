@@ -40,8 +40,8 @@ struct SymbolsSetParser {
 				}
 				context.index = string.index(after: context.index)
 			case "[":
-				if parseConstants, let set = parseConstants(string: string, context: &context) {
-					context.parsed += set.rawValue
+				if parseConstants, let element = parseConstants(string: string, context: &context) {
+					context.parsed.append(element)
 				} else {
 					try add(char: string[context.index], string: string, parser: &context)
 					context.index = string.index(after: context.index)
@@ -118,11 +118,12 @@ struct SymbolsSetParser {
 		return Character(scalar)
 	}
 	
-	private func parseConstants(string: String, context: inout Context) -> Regex.SymbolsSet? {
-		for count in Regex.SymbolsSet.constantsLenghts {
-			if string.distance(from: context.index, to: string.endIndex) >= count, let set = Regex.SymbolsSet.constants[String(string[context.index..<string.index(context.index, offsetBy: count)])] {
+	private func parseConstants(string: String, context: inout Context) -> Regex.SymbolsSet.Element? {
+		for count in Regex.SymbolsSet.Element.constantsLenghts {
+			if string.distance(from: context.index, to: string.endIndex) >= count,
+					let element = Regex.SymbolsSet.Element.constants[String(string[context.index..<string.index(context.index, offsetBy: count)])] {
 				context.index = string.index(context.index, offsetBy: count)
-				return set
+				return element
 			}
 		}
 		return nil
@@ -138,12 +139,12 @@ struct SymbolsSetParser {
 		
 	struct Context {
 		var index: String.Index
-		var parsed: [ClosedRange<Character>] = []
+		var parsed: [Regex.SymbolsSet.Element] = []
 		var cache: Character?
 		var isRange: Bool = false
 		var isInverted: Bool = false
 		var set: Regex.SymbolsSet {
-			isInverted ? Regex.SymbolsSet(rawValue: parsed).inverted : Regex.SymbolsSet(rawValue: parsed)
+			Regex.SymbolsSet(parsed, isInverted: isInverted)
 		}
 	}
 }

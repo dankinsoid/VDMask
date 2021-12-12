@@ -11,6 +11,8 @@ extension Regex {
 	
 	//	///[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}
 	
+//	let regex: Regex = "\([.alphanumeric, "._%+-"]+)@\([.alphanumeric, "._"]+).\([.alphabetic], 2...64)"
+//	
 //	Regex
 //		.repeat(.any(of: ["A"..."Z", "0"..."9", "a"..."z", "._%+-"]))
 //		.string("@")

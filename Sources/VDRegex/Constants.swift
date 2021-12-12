@@ -59,30 +59,30 @@ import Foundation
 //	///`?`
 //	public static var oneOrNone: Regex { .oneOrNone(.default) }
 //	///`?`
-//	public static func oneOrNone(_ quantification: Quantification) -> Regex { Regex("?" + quantification.rawValue) }
+//	public static func oneOrNone(_ quantifierType: QuantifierType) -> Regex { Regex("?" + quantifierType.rawValue) }
 //	///`+`
-//	public static func count(_ quantification: Quantification) -> Regex { Regex("+" + quantification.rawValue) }
+//	public static func count(_ quantifierType: QuantifierType) -> Regex { Regex("+" + quantifierType.rawValue) }
 //	///`*`
-//	public static func anyCount(_ quantification: Quantification) -> Regex { Regex("*" + quantification.rawValue) }
+//	public static func anyCount(_ quantifierType: QuantifierType) -> Regex { Regex("*" + quantifierType.rawValue) }
 //
 //	///{count}
-//	public static func count(_ count: Int, _ quantification: Quantification = .default) -> Regex {
-//		Regex("{\(count)}" + quantification.rawValue)
+//	public static func count(_ count: Int, _ quantifierType: QuantifierType = .default) -> Regex {
+//		Regex("{\(count)}" + quantifierType.rawValue)
 //	}
 //
 //	///{min,max}
-//	public static func count(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
-//		Regex("{\(range.lowerBound),\(range.upperBound)}" + quantification.rawValue)
+//	public static func count(_ range: ClosedRange<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		Regex("{\(range.lowerBound),\(range.upperBound)}" + quantifierType.rawValue)
 //	}
 //
 //	///{min,}
-//	public static func count(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
-//		Regex("{\(range.lowerBound),}" + quantification.rawValue)
+//	public static func count(_ range: PartialRangeFrom<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		Regex("{\(range.lowerBound),}" + quantifierType.rawValue)
 //	}
 //
 //	///{,max}
-//	public static func count(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
-//		Regex("{,\(range.upperBound)}" + quantification.rawValue)
+//	public static func count(_ range: PartialRangeThrough<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		Regex("{,\(range.upperBound)}" + quantifierType.rawValue)
 //	}
 //
 //	///\number
@@ -201,28 +201,28 @@ import Foundation
 //	public var anyCount: Regex { self + .anyCount }
 //
 //	///`+`
-//	public func count(_ quantification: Quantification) -> Regex { self + .count(quantification) }
+//	public func count(_ quantifierType: QuantifierType) -> Regex { self + .count(quantifierType) }
 //	///`*`
-//	public func anyCount(_ quantification: Quantification) -> Regex { self + .anyCount(quantification) }
+//	public func anyCount(_ quantifierType: QuantifierType) -> Regex { self + .anyCount(quantifierType) }
 //
 //	///{count}
-//	public func count(_ count: Int, _ quantification: Quantification = .default) -> Regex {
-//		self + .count(count, quantification)
+//	public func count(_ count: Int, _ quantifierType: QuantifierType = .default) -> Regex {
+//		self + .count(count, quantifierType)
 //	}
 //
 //	///{min,max}
-//	public func count(_ range: ClosedRange<Int>, _ quantification: Quantification = .default) -> Regex {
-//		self + .count(range, quantification)
+//	public func count(_ range: ClosedRange<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		self + .count(range, quantifierType)
 //	}
 //
 //	///{min,}
-//	public func count(_ range: PartialRangeFrom<Int>, _ quantification: Quantification = .default) -> Regex {
-//		self + .count(range, quantification)
+//	public func count(_ range: PartialRangeFrom<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		self + .count(range, quantifierType)
 //	}
 //
 //	///{,max}
-//	public func count(_ range: PartialRangeThrough<Int>, _ quantification: Quantification = .default) -> Regex {
-//		self + .count(range, quantification)
+//	public func count(_ range: PartialRangeThrough<Int>, _ quantifierType: QuantifierType = .default) -> Regex {
+//		self + .count(range, quantifierType)
 //	}
 //
 //	///\number
