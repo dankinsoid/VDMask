@@ -352,17 +352,19 @@ public enum MaskBuilder {
         )
     }
     
-    //    @inlinable
-    //    static func buildArray<Output: RangeReplaceableCollection>(_ components: [Mask<Output>]) -> Mask<Output> {
-    //        //        guard !components.isEmpty else { return Mask() }
-    //#warning("Empty")
-    //        guard components.count > 1 else { return components[0] }
-    //        return Mask(
-    //            components.dropFirst().reduce(components[0]) { accumulated, next in
-    //                buildPartialBlock(accumulated: accumulated, next: next)
-    //            }
-    //        )
-    //    }
+    @inlinable
+    @_disfavoredOverload
+    static func buildArray<Output>(_ components: [Mask<Output>]) -> Mask<[Output]> {
+        guard !components.isEmpty else { return buildBlock().map { [] } }
+        return Mask(
+            components.dropFirst().reduce(components[0].map { [$0] }) { accumulated, next in
+                SequenceMask(first: accumulated, second: next) {
+                    $0 + [$1]
+                }
+                .mask
+            }
+        )
+    }
     
     @inlinable
     public static func buildExpression<T>(_ expression: some MaskComponent<T>) -> Mask<T> {
