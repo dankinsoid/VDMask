@@ -12,9 +12,9 @@ let phoneMask = Mask {
   ")-"
   Repeat("0"..."9", 3)
   Repeat(2) {
-		"-"
-		Repeat("0"..."9", 2)
-	}
+    "-"
+    Repeat("0"..."9", 2)
+  }
 }.joined()
 ```
  ## Installation
