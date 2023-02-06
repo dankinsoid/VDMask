@@ -1,7 +1,7 @@
 import XCTest
-@testable import VDRegex
+@testable import VDMask
 
-final class VDRegexTests: XCTestCase {
+final class VDMaskTests: XCTestCase {
 	
 	static var allTests = [
 		("testRegex", testRegex)

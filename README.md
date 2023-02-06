@@ -1,57 +1,37 @@
-# VDRegex
- syntaxis for regex
+# VDMask
+
  ## Example
 ```swift
-//email regex "[A-Z0-9a-z._%+-]+@[A-Z0-9a-z.]+\\.[A-Za-z]{2,64}"
-
-let emailRegex1 = Regex {
-  ["A"-"Z", 0-9, "a"-"z", "._%+-"]+
-  "@"
-  ["A"-"Z", 0-9, "a"-"z", "."]+
-  "."
-  Regex["A"-"Z", "a"-"z"].count(2...64)
-}
+let phoneMaskShort = Mask("+#-(###)-###-##-##", ["#": "0"..."9"])
  
-let emailRegex2 = Regex[.alphanumeric, "._%+-"]("@")[.alphanumeric, "."](".")[.alphabetic].count(2...64)
- 
-//phone regex "+[0-9]-\\([0-9]{3}\\)-[0-9]{3}(-[0-9]{2}){2}"
- 
-let phoneRegexShort = Regex("+")[0-9]("-(")[0-9]({3})(")-")[0-9]({3})(Regex("-")[0-9]({2}))({2})
- 
-let phoneRegexReadable = Regex {
+let phoneMask = Mask {
   "+"
-  [0-9] //or Regex.digit
+  Repeat("0"..."9", 1)
   "-("
-  Regex[0-9].count(3)
+  Repeat("0"..."9", 3)
   ")-"
-  Regex[0-9].count(3)
-  Regex.group {
-    "-"
-    Regex[0-9].count(2)
-  }.count(2)
-}
-
-switch someString {
-case Regex.email: print("this is an email string")
-case Regex.digit.repeats: print("this is a number only string")
-default: break
-}
+  Repeat("0"..."9", 3)
+  Repeat(2) {
+		"-"
+		Repeat("0"..."9", 2)
+	}
+}.joined()
 ```
  ## Installation
  1. [Swift Package Manager](https://github.com/apple/swift-package-manager)
  
  Create a `Package.swift` file.
  ```swift
- // swift-tools-version:5.0
+ // swift-tools-version:5.7
  import PackageDescription
  
  let package = Package(
    name: "SomeProject",
    dependencies: [
-     .package(url: "https://github.com/dankinsoid/VDRegex.git", from: "1.6.0")
+     .package(url: "https://github.com/dankinsoid/VDMask.git", from: "2.0.0")
    ],
    targets: [
-    .target(name: "SomeProject", dependencies: ["VDRegex"])
+    .target(name: "SomeProject", dependencies: ["VDMask"])
    ]
   )
 ```
